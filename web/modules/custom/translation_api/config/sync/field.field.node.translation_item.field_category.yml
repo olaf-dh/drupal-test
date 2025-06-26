@@ -1,0 +1,21 @@
+uuid: 68c02ea1-9e05-48f0-ae46-cec0a4748d21
+langcode: de
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_category
+    - node.type.translation_item
+id: node.translation_item.field_category
+field_name: field_category
+entity_type: node
+bundle: translation_item
+label: Kategorie
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings: {  }
+field_type: entity_reference

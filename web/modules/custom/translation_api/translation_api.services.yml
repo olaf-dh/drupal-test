@@ -1,0 +1,4 @@
+services:
+  translation_api.translation_service:
+    class: Drupal\translation_api\Service\TranslationService
+    arguments: ['@entity_type.manager', '@cache.default']

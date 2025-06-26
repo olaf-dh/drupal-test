@@ -1,0 +1,22 @@
+uuid: 47b099c6-49a4-4290-9ba4-b9302e3930a4
+langcode: de
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_it
+    - node.type.translation_item
+  module:
+    - text
+id: node.translation_item.field_it
+field_name: field_it
+entity_type: node
+bundle: translation_item
+label: Italienisch
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  allowed_formats: {  }
+field_type: text_long

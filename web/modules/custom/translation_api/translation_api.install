@@ -1,0 +1,91 @@
+<?php
+
+/**
+ * Implements hook_install().
+ *
+ * Diese Methode wird beim Aktivieren des Moduls aufgerufen. Sie erstellt:
+ * - Einen Taxonomie-Term "general" im Vokabular "translation_categories", falls noch nicht vorhanden.
+ * - Drei Beispiel-Nodes vom Typ "translation_item", sofern der Schlüssel "welcome_message" noch nicht existiert.
+ */
+function translation_api_install(): void {
+  // Prüfen, ob der Term "general" in "translation_categories" bereits existiert.
+  $term_exists = \Drupal::entityTypeManager()
+    ->getStorage('taxonomy_term')
+    ->getQuery()
+    ->accessCheck(FALSE)
+    ->condition('vid', 'translation_categories')
+    ->condition('name', 'general')
+    ->range(0, 1)
+    ->execute();
+
+  if (empty($term_exists)) {
+    // Term "general" erstellen
+    $term = \Drupal\taxonomy\Entity\Term::create([
+      'vid' => 'translation_categories',
+      'name' => 'general',
+    ]);
+    $term->save();
+  } else {
+    // Vorhandenen Term laden
+    $term = \Drupal\taxonomy\Entity\Term::load(reset($term_exists));
+  }
+
+  // Prüfen, ob bereits ein Beispiel-Node mit dem Schlüssel "welcome_message" existiert
+  $existing = \Drupal::entityTypeManager()
+    ->getStorage('node')
+    ->getQuery()
+    ->accessCheck(FALSE)
+    ->condition('type', 'translation_item')
+    ->condition('field_key.value', 'welcome_message')
+    ->execute();
+
+  if (!empty($existing)) {
+    // Abbrechen, wenn Demo-Daten bereits existieren
+    return;
+  }
+
+  // Beispielübersetzungen definieren
+  $translations = [
+    [
+      'title' => 'Welcome Message',
+      'key' => 'welcome_message',
+      'de' => 'Willkommen',
+      'en' => 'Welcome',
+      'fr' => 'Bienvenue',
+      'it' => 'Benvenuto',
+    ],
+    [
+      'title' => 'Goodbye Message',
+      'key' => 'goodbye_message',
+      'de' => 'Auf Wiedersehen',
+      'en' => 'Goodbye',
+      'fr' => 'Au revoir',
+      'it' => 'Arrivederci',
+    ],
+    [
+      'title' => 'Thank You Message',
+      'key' => 'thankyou_message',
+      'de' => 'Danke',
+      'en' => 'Thank you',
+      'fr' => 'Merci',
+      'it' => 'Grazie',
+    ],
+  ];
+
+  // Nodes für jede Beispielübersetzung erstellen
+  foreach ($translations as $item) {
+    $node = \Drupal\node\Entity\Node::create([
+      'type' => 'translation_item',
+      'uid' => 1, // Benutzer mit ID 1 (Admin)
+      'title' => $item['title'],
+      'field_key' => [['value' => $item['key']]],
+      'field_category' => [['target_id' => $term->id()]],
+      'field_de' => [['value' => $item['de']]],
+      'field_en' => [['value' => $item['en']]],
+      'field_fr' => [['value' => $item['fr']]],
+      'field_it' => [['value' => $item['it']]],
+      'status' => 1, // Veröffentlicht
+    ]);
+    $node->save();
+  }
+}

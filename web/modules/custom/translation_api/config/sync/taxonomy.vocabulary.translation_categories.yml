@@ -1,0 +1,9 @@
+uuid: 2cd36566-6d98-418b-959d-f26f7647a7a1
+langcode: de
+status: true
+dependencies: {  }
+name: 'Translation Categories'
+vid: translation_categories
+description: null
+weight: 0
+new_revision: false

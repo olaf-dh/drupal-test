@@ -1,0 +1,69 @@
+uuid: f2652a9f-1545-4dca-9c2f-6810c0ef0136
+langcode: de
+status: true
+dependencies:
+  config:
+    - field.field.node.translation_item.field_category
+    - field.field.node.translation_item.field_de
+    - field.field.node.translation_item.field_en
+    - field.field.node.translation_item.field_fr
+    - field.field.node.translation_item.field_it
+    - field.field.node.translation_item.field_key
+    - node.type.translation_item
+  module:
+    - text
+    - user
+id: node.translation_item.default
+targetEntityType: node
+bundle: translation_item
+mode: default
+content:
+  field_category:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 102
+    region: content
+  field_de:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 103
+    region: content
+  field_en:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 104
+    region: content
+  field_fr:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 105
+    region: content
+  field_it:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 106
+    region: content
+  field_key:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 101
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden:
+  langcode: true

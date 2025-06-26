@@ -1,0 +1,6 @@
+name: Translation Api
+type: module
+description: 'Custom made translation module'
+core_version_requirement: ^11
+package: Custom
+version: '1.0'

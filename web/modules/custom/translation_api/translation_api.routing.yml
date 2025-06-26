@@ -1,0 +1,15 @@
+translation_api.list:
+  path: '/api/translations'
+  defaults:
+    _controller: '\Drupal\translation_api\Controller\TranslationApiController::getAll'
+    _format: 'json'
+  requirements:
+    _permission: 'access content'
+
+translation_api.item:
+  path: '/api/translations/{key}'
+  defaults:
+    _controller: '\Drupal\translation_api\Controller\TranslationApiController::getByKey'
+    _format: 'json'
+  requirements:
+    _permission: 'access content'
