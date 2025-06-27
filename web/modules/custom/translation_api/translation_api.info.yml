@@ -4,3 +4,7 @@ description: 'Custom made translation module'
 core_version_requirement: ^11
 package: Custom
 version: '1.0'
+dependencies:
+  - drupal:hal
+  - drupal:rest
+  - drupal:serialisation

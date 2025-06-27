@@ -37,21 +37,21 @@ ddev start
 ddev exec composer install
 ```
 
-### 4. Drupal mit bereitgestellter Konfiguration installieren
-
-Das Modul bringt vorkonfigurierte Felder, Inhaltstypen und Taxonomien mit. Die vollständige
-Konfiguration ist im Verzeichnis `modules/custom/translation_api/config/sync` hinterlegt.
-Diese wird beim `site:install` übernommen:
+### 4. Drupal mit Standard-Profil installieren
 
 ```bash
-ddev exec drush site:install --existing-config --account-name=admin --account-pass=admin --site-name="Translation API"
+ddev exec drush site:install standard --account-name=admin --account-pass=admin --site-name="Translation API"
+```
+### 5. Modul aktivieren
+
+```bash
+ddev exec drush en translation_api -y
 ```
 
-Dadurch wird:
+Dadurch werden:
 
-- Drupal installiert
-- die Konfiguration aus `modules/custom/translation_api/config/sync` übernommen (Content-Type, Felder, Modulstatus)
-- das Modul automatisch aktiviert
+- das Modul aktiviert
+- Content-Type, Felder, Taxonomie installiert
 - Demo-Daten durch `translation_api.install` erstellt
 
 ---
@@ -104,11 +104,13 @@ invalidiert
 
 ```
 translation_api/
-├── config/sync/                # Vollständige Konfiguration - inkl. Inhaltstyp, Felder etc.
-├── src/Controller/             # REST-API Controller
-├── src/Service/                # Serviceklassen mit Logik
+├── config/install/                 # Konfiguration der Modul-Elemente inkl. Inhaltstyp, Felder etc.
+├── src/Controller/                 # REST-API und Admin Controller
+├── src/Service/                    # Serviceklassen mit Logik
 ├── translation_api.info.yml
-├── translation_api.install     # Erstellt Demo-Inhalte
+├── translation_api.install         # Erstellt Demo-Inhalte
+├── translation_api.links.menu.yml  # Erstellt den Menü-Eintrag
+├── translation_api.module          # Cache-Tag 'translation_item_list' invalidieren
 ├── translation_api.routing.yml
 ├── translation_api.services.yml
 ```
@@ -165,8 +167,10 @@ Ausgabeschicht zu gewährleisten.
 verarbeitbar sind.
 - Der **Drupal-Cache** wird verwendet, um unnötige Datenbankabfragen zu vermeiden. Cache-Tags
 sorgen dafür, dass Inhalte bei Änderungen sofort neu geladen werden.
-- Die Konfiguration wird über `modules/custom/translation_api/config/sync` bereitgestellt, damit
-das Modul vollständig mit Inhaltstyp, Feldern und Demo-Inhalten rekonstruierbar ist.
+- Die Konfiguration wird über `modules/custom/translation_api/config/install` bereitgestellt, damit
+das Modul mit Inhaltstyp, Feldern rekonstruierbar ist.
+- Demo-Daten werden beim aktivieren des Modules aus `modules/custom/translation_api/translation_api.module`
+erstellt
 
 ---
 
@@ -182,9 +186,6 @@ Füge in deiner Datei `web/sites/default/settings.local.php` folgende Zeile hinz
 ```php
 $settings['translation_api_key'] = 'geheim123';
 ```
-
-> Nutze niemals `settings.php` direkt für geheime Schlüssel. Die Datei `settings.local.php` ist in
-> `.gitignore` enthalten und sicher.
 
 ### Beispiel‑Header in Postman
 
