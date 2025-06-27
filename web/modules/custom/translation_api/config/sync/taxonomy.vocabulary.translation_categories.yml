@@ -2,6 +2,8 @@ uuid: 2cd36566-6d98-418b-959d-f26f7647a7a1
 langcode: de
 status: true
 dependencies: {  }
+_core:
+  default_config_hash: 6s7yhty8wzR7t5aUzSw8RpGFlJuUWe6GN857RgDQ84I
 name: 'Translation Categories'
 vid: translation_categories
 description: null

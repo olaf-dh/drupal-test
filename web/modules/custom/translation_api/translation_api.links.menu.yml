@@ -1,0 +1,6 @@
+translation_api.admin.overview:
+  title: 'Übersetzungen'
+  description: 'Verwalte alle Translation Items'
+  parent: system.admin_content
+  route_name: translation_api.admin_overview
+  weight: 20

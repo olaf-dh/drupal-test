@@ -1,0 +1,27 @@
+<?php
+
+use Drupal\Core\Cache\Cache;
+use Drupal\Core\Entity\EntityInterface;
+
+/**
+ * Löscht API-Cache, wenn Translation-Items geändert werden.
+ */
+function translation_api_entity_insert(EntityInterface $entity): void {
+  _translation_api_invalidate($entity);
+}
+function translation_api_entity_update(EntityInterface $entity): void {
+  _translation_api_invalidate($entity);
+}
+function translation_api_entity_delete(EntityInterface $entity): void {
+  _translation_api_invalidate($entity);
+}
+
+/**
+ * Interne Helper-Funktion.
+ * Löscht nur den Feed-Cache für Translation-Items
+ */
+function _translation_api_invalidate(EntityInterface $entity): void {
+  if ($entity->getEntityTypeId() === 'node' && $entity->bundle() === 'translation_item') {
+    Cache::invalidateTags(['translation_item_list']);
+  }
+}

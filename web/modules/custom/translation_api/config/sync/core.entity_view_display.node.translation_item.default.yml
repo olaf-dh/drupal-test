@@ -13,6 +13,8 @@ dependencies:
   module:
     - text
     - user
+_core:
+  default_config_hash: Wd5ZH0BQHfQFzvItkSPnFZcqaQiK-LN4mLqUp3tYSR0
 id: node.translation_item.default
 targetEntityType: node
 bundle: translation_item
@@ -26,32 +28,32 @@ content:
     weight: 102
     region: content
   field_de:
-    type: text_default
+    type: basic_string
     label: above
     settings: {  }
     third_party_settings: {  }
-    weight: 103
+    weight: 107
     region: content
   field_en:
-    type: text_default
+    type: basic_string
     label: above
     settings: {  }
     third_party_settings: {  }
-    weight: 104
+    weight: 108
     region: content
   field_fr:
-    type: text_default
+    type: basic_string
     label: above
     settings: {  }
     third_party_settings: {  }
-    weight: 105
+    weight: 109
     region: content
   field_it:
-    type: text_default
+    type: basic_string
     label: above
     settings: {  }
     third_party_settings: {  }
-    weight: 106
+    weight: 110
     region: content
   field_key:
     type: text_default
@@ -65,5 +67,4 @@ content:
     third_party_settings: {  }
     weight: 100
     region: content
-hidden:
-  langcode: true
+hidden: {  }

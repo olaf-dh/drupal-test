@@ -5,7 +5,8 @@
 /web/themes/contrib/
 /web/sites/*/files
 /web/sites/*/settings.php
-/web/sites/*/services.yml
+/web/sites/*/settings.local.php
+/web/sites/*/*services*.yml
 /config/sync/
 /.idea/
 /.vscode/
@@ -16,3 +17,5 @@
 /node_modules/
 /package-lock.json
 /yarn.lock
+
+/phpstan.neon

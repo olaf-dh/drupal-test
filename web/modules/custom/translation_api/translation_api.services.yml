@@ -1,4 +1,9 @@
 services:
   translation_api.translation_service:
     class: Drupal\translation_api\Service\TranslationService
-    arguments: ['@entity_type.manager', '@cache.default']
+    arguments: ['@entity_type.manager', '@cache.data']
+  translation_api.auth:
+    class: Drupal\translation_api\Service\AuthenticationService
+    arguments:
+      - '@request_stack'
+      - '@settings'

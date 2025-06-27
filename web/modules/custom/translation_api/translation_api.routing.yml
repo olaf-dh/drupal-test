@@ -13,3 +13,14 @@ translation_api.item:
     _format: 'json'
   requirements:
     _permission: 'access content'
+
+translation_api.admin_overview:
+  path: '/admin/content/translations'
+  defaults:
+    _controller: '\Drupal\translation_api\Controller\TranslationAdminController::overview'
+    _title: 'Übersetzungen'
+  requirements:
+    _permission: 'access content'
+  options:
+    _admin_route: true
+

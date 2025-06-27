@@ -5,6 +5,8 @@ dependencies:
   config:
     - field.storage.node.field_key
     - node.type.translation_item
+_core:
+  default_config_hash: SCfKsj5QOl-VNcxHPgUcAiTdUgCD6FOcridmaTl1Ih0
 id: node.translation_item.field_key
 field_name: field_key
 entity_type: node

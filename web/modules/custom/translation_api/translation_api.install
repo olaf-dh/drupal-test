@@ -1,6 +1,7 @@
 <?php
 
 /**
+ * @file
  * Implements hook_install().
  *
  * Diese Methode wird beim Aktivieren des Moduls aufgerufen. Sie erstellt:
@@ -12,7 +13,7 @@ function translation_api_install(): void {
   $term_exists = \Drupal::entityTypeManager()
     ->getStorage('taxonomy_term')
     ->getQuery()
-    ->accessCheck(FALSE)
+    ->accessCheck(false)
     ->condition('vid', 'translation_categories')
     ->condition('name', 'general')
     ->range(0, 1)
@@ -20,6 +21,7 @@ function translation_api_install(): void {
 
   if (empty($term_exists)) {
     // Term "general" erstellen
+    /** @var \Drupal\taxonomy\Entity\Term $term */
     $term = \Drupal\taxonomy\Entity\Term::create([
       'vid' => 'translation_categories',
       'name' => 'general',
@@ -27,6 +29,7 @@ function translation_api_install(): void {
     $term->save();
   } else {
     // Vorhandenen Term laden
+    /** @var \Drupal\taxonomy\Entity\Term $term */
     $term = \Drupal\taxonomy\Entity\Term::load(reset($term_exists));
   }
 
@@ -34,7 +37,7 @@ function translation_api_install(): void {
   $existing = \Drupal::entityTypeManager()
     ->getStorage('node')
     ->getQuery()
-    ->accessCheck(FALSE)
+    ->accessCheck(false)
     ->condition('type', 'translation_item')
     ->condition('field_key.value', 'welcome_message')
     ->execute();

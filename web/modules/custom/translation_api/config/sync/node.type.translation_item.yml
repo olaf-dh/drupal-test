@@ -1,10 +1,19 @@
 uuid: ece80c08-fe9c-40ae-9cf9-af2a6426e36b
 langcode: de
 status: true
-dependencies: {  }
+dependencies:
+  module:
+    - menu_ui
+third_party_settings:
+  menu_ui:
+    available_menus:
+      - main
+    parent: 'main:'
+_core:
+  default_config_hash: No_-nA2pdXJvZvZuHd8gHKr0Mw-QH8FMse_49JBeNvA
 name: 'Translation Item'
 type: translation_item
-description: null
+description: 'Ein Translation Item ist eine einzelne Sprach-Ressource (Key + Übersetzungen), die über die Translation-API von Anwendungen konsumiert wird.'
 help: null
 new_revision: true
 preview_mode: 1

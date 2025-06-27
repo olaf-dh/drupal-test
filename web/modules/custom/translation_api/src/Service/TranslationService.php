@@ -4,39 +4,68 @@ namespace Drupal\translation_api\Service;
 
 use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
 use Drupal\Component\Plugin\Exception\PluginNotFoundException;
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\node\Entity\Node;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Cache\CacheBackendInterface;
+use Drupal\node\NodeInterface;
 
+/**
+ * @file
+ *
+ * Liefert Übersetzungsdaten im API-Format.
+ *
+ * Verantwortlichkeiten:
+ *  - Abfrage von Translation-Nodes
+ *  - Caching der Ergebnisse (Cache-Tags: node:{nid}, translation_item_list)
+ *  - Aufbereitung in die JSON-Struktur für die REST-Endpunkte
+ */
 class TranslationService {
   protected EntityTypeManagerInterface $entityTypeManager;
   protected CacheBackendInterface $cache;
+  protected CacheableMetadata $responseCacheable;
 
   public function __construct(EntityTypeManagerInterface $entityTypeManager, CacheBackendInterface $cache) {
     $this->entityTypeManager = $entityTypeManager;
     $this->cache = $cache;
+
+    // Basis-Metadaten: globales Tag + Max-Age
+    $this->responseCacheable = (new CacheableMetadata())
+      ->setCacheTags(['translation_item_list'])
+      ->setCacheMaxAge(900);
+  }
+
+  public function getResponseCacheable(): CacheableMetadata {
+    return $this->responseCacheable;
   }
 
   /**
+   * Liefert alle Übersetzungen, optional gefiltert nach Kategorie.
+   *
+   * @return array<int, array<string, mixed>>
+   *
    * @throws InvalidPluginDefinitionException
    * @throws PluginNotFoundException
    */
   public function getAllTranslations(?string $category = null): array {
     $cid = 'translation_api_all_' . ($category ?? 'all');
 
-    // cache hit
+    // cache Treffer?
     if ($cache = $this->cache->get($cid)) {
-      return $cache->data;
+      /** @var array<int, array<string, mixed>> $data */
+      $data = $cache->data;
+
+      return $data;
     }
 
-    // build data
+    // Daten aufbauen
     $storage = $this->entityTypeManager->getStorage('node');
     $query = $storage->getQuery()
       ->condition('type', 'translation_item')
       ->accessCheck(true);
 
     if ($category) {
-      // taxonomy term per name
+      // Taxonomie-Term per Namen
       $query->condition('field_category.entity.name', $category);
     }
 
@@ -44,21 +73,23 @@ class TranslationService {
     $nodes = $storage->loadMultiple($node_ids);
 
     $items = [];
-    $tags  = ['translation_item_list'];  // basic tag for "all"
+    $tags  = ['translation_item_list'];  // Basis-Tag für "alle"
     foreach ($nodes as $node) {
       /** @var Node $node */
       $items[] = $this->buildItem($node);
-      $tags[]  = 'node:' . $node->id();  // one tag per node
+      $tags[]  = 'node:' . $node->id();  // ein Tag pro Node
     }
 
-    // write cache with tags
+    // Cache schreiben mit Tags
     $this->cache->set($cid, $items, CacheBackendInterface::CACHE_PERMANENT, $tags);
 
     return $items;
   }
 
   /**
-   * Delivers a single translation item per key
+   * Liefert genau eine Übersetzung anhand des Schlüssels.
+   *
+   * @return array<string, mixed>|null
    *
    * @throws InvalidPluginDefinitionException
    * @throws PluginNotFoundException
@@ -66,12 +97,13 @@ class TranslationService {
   public function getTranslationByKey(string $key): ?array {
     $cid = 'translation_api_item_' . $key;
     if ($cache = $this->cache->get($cid)) {
-      return $cache->data;
+      /** @var array<string, mixed> $data */
+      $data = $cache->data;
+      return $data;
     }
 
     $storage = $this->entityTypeManager->getStorage('node');
 
-    // accessCheck(false) = for guests also
     $node_ids = $storage->getQuery()
       ->accessCheck(false)
       ->condition('type', 'translation_item')
@@ -80,14 +112,14 @@ class TranslationService {
       ->execute();
 
     if (empty($node_ids)) {
-      return null; // no hits
+      return null; // kein Treffer
     }
 
     /** @var Node $node */
     $node = $storage->load(reset($node_ids));
     $item = $this->buildItem($node);
 
-    // Single-Cache with node:{nid}-tag → Core invalidated automatic
+    // Einzel-Cache mit spezifischem Tag
     $this->cache->set(
       $cid,
       $item,
@@ -98,15 +130,30 @@ class TranslationService {
     return $item;
   }
 
-  protected function buildItem(Node $node): array {
+  /**
+   * Hilfsfunktion: baut die Item-Struktur
+   *
+   * @param NodeInterface|null $node
+   *
+   * @return array<string, mixed>
+   */
+  protected function buildItem(?NodeInterface $node): array {
+    if (!$node) {
+      return [];
+    }
+
+    // jede Node als zusätzliche Abhängigkeit anhängen
+    $this->responseCacheable
+      ->addCacheableDependency(CacheableMetadata::createFromObject($node));
+
     return [
-      'key' => $node->get('field_key')->value,
-      'category' => $node->get('field_category')->entity?->label() ?? null,
+      'key' => $node->get('field_key')->getString(),
+      'category' => $node->get('field_category')->getEntity()->label() ?? null,
       'translations' => [
-        'de' => $node->get('field_de')->value,
-        'en' => $node->get('field_en')->value,
-        'fr' => $node->get('field_fr')->value,
-        'it' => $node->get('field_it')->value,
+        'de' => $node->get('field_de')->getString(),
+        'en' => $node->get('field_en')->getString(),
+        'fr' => $node->get('field_fr')->getString(),
+        'it' => $node->get('field_it')->getString(),
       ],
     ];
   }
